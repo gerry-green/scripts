@@ -7,19 +7,18 @@ user=$1
 [ -z "$user" ] && { echo "please supply a user name dumbass"; exit 1; }
 # check if target user exists
 getent passwd | grep -q ^$user || { echo "user $user doesn't exist dumbass"; exit 1; }
-echo "made it past user exists check"
+
 [ -z "$(which curl)" ] && { echo "please install curl before running this script dumbass"; exit 1; }
 [ -z "$(which git)" ] && { echo "please install git before running this script dumbass"; exit 1; }
-echo "made it past util check"
 cd /home/$user
-echo "made it to user's home directory"
+
 # silence vim: (seriously who the fuck would want the bell on by default?)
 echo "set belloff=all" > .vimrc
 # and stop fucking with the line endings (causes spurious git diffs on files from other editors):
 echo "set nofixeol" >> .vimrc
 
 export RUNZSH=no
-sh -c "\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # install powerlevel10k theme and switch to it:
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/$user/.oh-my-zsh/custom/themes/powerlevel10k
