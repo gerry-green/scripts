@@ -6,13 +6,13 @@
 user=$1
 [ -z "$user" ] && { echo "please supply a user name dumbass"; exit 1; }
 # check if target user exists
-getent passwd | grep -q ^$user && { echo "user $user doesn't exist dumbass"; exit 1; }
-
+getent passwd | grep -q ^$user || { echo "user $user doesn't exist dumbass"; exit 1; }
+echo "made it past user exists check"
 [ -z "$(which curl)" ] && { echo "please install curl before running this script dumbass"; exit 1; }
 [ -z "$(which git)" ] && { echo "please install git before running this script dumbass"; exit 1; }
-
+echo "made it past util check"
 cd /home/$user
-
+echo "made it to user's home directory"
 # silence vim: (seriously who the fuck would want the bell on by default?)
 echo "set belloff=all" > .vimrc
 # and stop fucking with the line endings (causes spurious git diffs on files from other editors):
