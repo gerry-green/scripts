@@ -1,0 +1,18 @@
+cat <<EOF > /home/$user/initzsh
+#!/usr/bin/zsh
+cd /home/$user
+
+# silence vim: (seriously who the fuck would want the bell on by default?)
+echo "set belloff=all" > .vimrc
+# and stop fucking with the line endings:
+echo "set nofixeol" >> .vimrc
+
+export RUNZSH=no
+sh -c "\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# install powerlevel10k theme and switch to it:
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/$user/.oh-my-zsh/custom/themes/powerlevel10k
+sed -i '/^ZSH_THEME=/s/=.*/=powerlevel10k\/powerlevel10k/' .zshrc
+
+EOF
+
