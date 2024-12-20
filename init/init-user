@@ -1,16 +1,38 @@
 #!/usr/bin/bash
 
 # this script initializes a new user account on ubuntu or debian
-# used to maintain a consistent setup on new proxmox nodes or instances of wsl
+# used to maintain a consistent setup on new proxmox nodes, VMs or instances of wsl
 
-user=$1
-[ -z "$user" ] && { echo "please supply a user name dumbass"; exit 1; }
-# check if target user exists
-getent passwd | grep -q ^$user || { echo "user $user doesn't exist dumbass"; exit 1; }
+user=$USER
 
 [ -z "$(which curl)" ] && { echo "please install curl before running this script dumbass"; exit 1; }
 [ -z "$(which git)" ] && { echo "please install git before running this script dumbass"; exit 1; }
 cd /home/$user
+
+# todo - automate adding the github key to known hosts ahead of this step
+
+[ ! -f /home/$user/.ssh/config ] && {
+cat << EOF > /home/$user/.ssh/config
+Host *
+  ServerAliveInterval 240
+
+Host github.com
+  User git
+  IdentityFile ~/.ssh/github
+
+Host 192.168.* aragorn isildur elendil hunter wrecker tech crosshair
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  LogLevel ERROR
+EOF
+; 
+}
+
+# todo: convert the name and email to parameters
+git config --global init.defaultBranch main
+git config --global user.email "gerry@g2dev.net"
+git config --global user.name "Gerry Green"
+git config --global core.editor "vim"
 
 # silence vim: (seriously who the fuck would want the bell on by default?)
 echo "set belloff=all" > .vimrc
@@ -27,3 +49,4 @@ sed -i '/^ZSH_THEME=/s/=.*/=powerlevel10k\/powerlevel10k/' .zshrc
 curl -fsSL https://raw.githubusercontent.com/gerry-green/scripts/main/p10k/.p10k.zsh > /home/$user/.p10k.zsh
 
 echo '[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh' >> /home/$user/.zshrc
+echo '[[ -f ~/.zsh_aliases ]] && source ~/.zsh_aliases' >> /home/$user/.zshrc 
